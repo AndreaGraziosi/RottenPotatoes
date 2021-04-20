@@ -4,7 +4,7 @@ const app = express()
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/rotten-potatoes', { useNewUrlParser: true });
 
-// INITIALIZE BODY-PARSER AND ADD IT TO APP
+
 
 // The following line must appear AFTER const app = express() and before your routes!
 app.use(express.urlencoded({ extended: true }));
@@ -14,6 +14,8 @@ const Review = mongoose.model('Review', {
   movieTitle: String,
   description: String
 });
+
+
 
 
 // app.js
@@ -66,11 +68,21 @@ app.post('/reviews', (req, res) => {
 app.post('/reviews', (req, res) => {
   Review.create(req.body).then((review) => {
     console.log(review);
-    res.redirect('/');
+    res.redirect(`/reviews/${review._id}`) // Redirect to reviews/:id
   }).catch((err) => {
     console.log(err.message);
   })
 })
+
+// SHOW
+app.get('/reviews/:id', (req, res) => {
+  // res.send('I\'m a review')
+  Review.findById(req.params.id).then((review) => {
+    res.render('reviews-show', { review: review })
+  }).catch((err) => {
+    console.log(err.message);
+  })
+});
 
 
 
